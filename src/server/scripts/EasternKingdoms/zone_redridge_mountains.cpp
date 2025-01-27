@@ -27,6 +27,11 @@ Script Data End */
 #include "Player.h"
 #include "ScriptedCreature.h"
 
+enum RedridgeQuests
+{
+    QUEST_TUNING_THE_GNOMECORDER = 26512,
+};
+
 namespace RedridgeMountains
 {
 enum DumpyKeeshan
@@ -381,6 +386,22 @@ public:
 };
 }
 
+class at_lakeshire_graveyard : public AreaTriggerScript
+{
+public:
+    at_lakeshire_graveyard() : AreaTriggerScript("at_lakeshire_graveyard") {}
+    bool OnTrigger(Player* player, const AreaTriggerEntry* at) override
+    {
+        if ((player->GetQuestStatus(QUEST_TUNING_THE_GNOMECORDER) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(QUEST_TUNING_THE_GNOMECORDER) == QUEST_STATUS_COMPLETE) && at->ID == 6034)
+        {
+            player->PlayDirectSound(18125, player);
+            player->CastSpell(player, 81769, true);
+            player->CompleteQuest(QUEST_TUNING_THE_GNOMECORDER);
+        }
+        return false;
+    }
+};
+
 void AddSC_redridge_mountains()
 {
     using namespace RedridgeMountains;
@@ -388,4 +409,5 @@ void AddSC_redridge_mountains()
     new npc_dumpy_and_keeshan();
     new npc_bridge_worker_alex();
     new npc_redridge_citizen();
+    new at_lakeshire_graveyard();
 }
